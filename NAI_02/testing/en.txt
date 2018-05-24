@@ -1,0 +1,4 @@
+Reduces data usage by displaying only readable content from wikipedia. It displays the readable text and one of the images. Wikipedia Text Only gives you access to entire wikipedia (encyclopedia). It gives you wiki article at your fingertips in seconds.
+This is a fast knowledge encyclopedia & wikipedia searhing tool.
+The most important thing is this is very simple to use. and you can access today's featured article.
+Wikipedia is the free encyclopedia containing more than 20 million articles in 280 languages, and is the most comprehensive and widely used reference work humans have ever compiled.
