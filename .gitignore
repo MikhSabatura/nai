@@ -6,5 +6,5 @@
 .idea
 *.iml
 out
-*.pdf
 gen
+.DS_Store
