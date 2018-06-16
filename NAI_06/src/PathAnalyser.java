@@ -22,8 +22,8 @@ public class PathAnalyser  {
     }
 
     private static Solution findOptimalPath(List<List<Integer>> distances) {
-        Solution optimal = Solution.getInstance(distances);
-//        Solution optimal = Solution.getInstance(distances, false);
+//        Solution optimal = Solution.getInstance(distances);
+        Solution optimal = Solution.getInstance(distances, false);
         int optimalLength = calculatePathLength(distances, optimal);
 
         System.out.println("initial path = " + optimal);
