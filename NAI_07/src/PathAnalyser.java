@@ -1,9 +1,15 @@
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 public class PathAnalyser {
 
     private List<List<Integer>> distances;
+
+    private static final double INITIAL_TEMPERATURE = 2000;
+    private static final double COOLING_RATE = 0.01;
+    private static final double MIN_TEMPERATURE = 1;
+
 
     public PathAnalyser(List<List<Integer>> distances) {
         this.distances = distances;
@@ -14,6 +20,7 @@ public class PathAnalyser {
             System.err.println("NO DATA FILE SPECIFIED");
             System.exit(1);
         }
+
         PathAnalyser pathAnalyser = null;
         try {
             pathAnalyser = new PathAnalyser(TSP_Parser.parseDistances(args[0]));
@@ -36,40 +43,40 @@ public class PathAnalyser {
         System.out.println("initial path = " + globalOptimal);
         System.out.println("initial length = " + globalOptimalLength + "\n");
 
-        double temp = 100000;
-        while (temp > 0) {
+        double temp = INITIAL_TEMPERATURE;
+        Random random = new Random();
+        while (temp > MIN_TEMPERATURE) {
             List<Solution> neighbours = localOptimal.generateNeighbours();
-
-            for (Solution neighbour : neighbours) {
-                int currLength = calculatePathLength(neighbour);
-                if (currLength < localOptimalLength) {
-                    localOptimal = neighbour;
-                    localOptimalLength = currLength;
-                    System.out.println("upd local length = " + localOptimalLength);
-                    System.out.println("upd local path   = " + localOptimal);
-                } else if (worthGoingLower(localOptimal, neighbour, temp)) {
-                    localOptimal = neighbour;
-                    localOptimalLength = currLength;
-                    System.out.println("upd local length = " + localOptimalLength);
-                    System.out.println("upd local path   = " + localOptimal);
-                }
-                if (localOptimalLength < globalOptimalLength) {
-                    globalOptimal = localOptimal;
-                    globalOptimalLength = localOptimalLength;
-                    System.out.println("upd global length = " + globalOptimalLength);
-                    System.out.println("upd global path   = " + globalOptimal);
-                }
+            Solution current = neighbours.get(random.nextInt(neighbours.size()));
+            int currLength = calculatePathLength(current);
+            if (currLength < localOptimalLength) {
+                localOptimal = current;
+                localOptimalLength = currLength;
+                System.out.println("-------- going lower --------");
+                System.out.println("upd local length = " + localOptimalLength);
+                System.out.println("upd local path   = " + localOptimal);
+            } else if (currLength > localOptimalLength && worthGoingLower(localOptimal, current, temp)) {
+                localOptimal = current;
+                localOptimalLength = currLength;
+                System.out.println("-------- going higher ---------");
+                System.out.println("upd local length = " + localOptimalLength);
+                System.out.println("upd local path   = " + localOptimal);
             }
-            temp -= 0.5;
+            if (localOptimalLength < globalOptimalLength) {
+                globalOptimal = localOptimal;
+                globalOptimalLength = localOptimalLength;
+                System.out.println("upd global length = " + globalOptimalLength);
+                System.out.println("upd global path   = " + globalOptimal);
+            }
+            temp -= COOLING_RATE;
         }
         return globalOptimal;
     }
 
     private boolean worthGoingLower(Solution curr, Solution neighbour, double temp) {
-        double probability = Math.pow(Math.E, -((calculatePathLength(curr) - calculatePathLength(neighbour)) / temp));
-//        System.out.println("probability = " + probability);
-//        System.out.println((calculatePathLength(curr) - calculatePathLength(neighbour)) + " " + temp);
-        return probability > 2;
+        double power = -(Math.abs(calculatePathLength(curr) - calculatePathLength(neighbour)) / temp);
+        double probability = Math.exp(power);
+        return probability >= Math.random();
     }
 
     private int calculatePathLength(Solution solution) {

@@ -28,7 +28,7 @@ public class PathAnalyser  {
 
         System.out.println("initial path = " + optimal);
         System.out.println("initial length = " + optimalLength + "\n");
-        
+
         boolean maxReached = false;
         while(!maxReached) {
             maxReached = true;
