@@ -6,9 +6,9 @@ public class PathAnalyser {
 
     private List<List<Integer>> distances;
 
-    private static final double INITIAL_TEMPERATURE = 2000;
-    private static final double COOLING_RATE = 0.01;
-    private static final double MIN_TEMPERATURE = 1;
+    private static final double INITIAL_TEMPERATURE = 10000;
+    private static final double COOLING_RATE = 0.0001;
+    private static final double STOP_CONDITION = 100;
 
 
     public PathAnalyser(List<List<Integer>> distances) {
@@ -45,22 +45,27 @@ public class PathAnalyser {
 
         double temp = INITIAL_TEMPERATURE;
         Random random = new Random();
-        while (temp > MIN_TEMPERATURE) {
+        int notMovingCount = 0;
+        while (notMovingCount < STOP_CONDITION) {
             List<Solution> neighbours = localOptimal.generateNeighbours();
             Solution current = neighbours.get(random.nextInt(neighbours.size()));
             int currLength = calculatePathLength(current);
             if (currLength < localOptimalLength) {
+                notMovingCount = 0;
                 localOptimal = current;
                 localOptimalLength = currLength;
                 System.out.println("-------- going lower --------");
                 System.out.println("upd local length = " + localOptimalLength);
                 System.out.println("upd local path   = " + localOptimal);
             } else if (currLength > localOptimalLength && worthGoingLower(localOptimal, current, temp)) {
+                notMovingCount = 0;
                 localOptimal = current;
                 localOptimalLength = currLength;
                 System.out.println("-------- going higher ---------");
                 System.out.println("upd local length = " + localOptimalLength);
                 System.out.println("upd local path   = " + localOptimal);
+            } else {
+                notMovingCount++;
             }
             if (localOptimalLength < globalOptimalLength) {
                 globalOptimal = localOptimal;
@@ -68,7 +73,7 @@ public class PathAnalyser {
                 System.out.println("upd global length = " + globalOptimalLength);
                 System.out.println("upd global path   = " + globalOptimal);
             }
-            temp -= COOLING_RATE;
+            temp *= (1-COOLING_RATE);
         }
         return globalOptimal;
     }
