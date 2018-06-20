@@ -29,20 +29,25 @@ public class PathAnalyser  {
         System.out.println("initial path = " + optimal);
         System.out.println("initial length = " + optimalLength + "\n");
 
-        boolean maxReached = false;
-        while(!maxReached) {
-            maxReached = true;
+        while(true) {
             List<Solution> neighbours = optimal.generateNeighbours();
+            Solution newOptimal = optimal;
+            int newOptimalLength = optimalLength;
 
             for (Solution neighbour : neighbours) {
                 int currLength = calculatePathLength(distances, neighbour);
                 if(currLength < optimalLength) {
-                    optimal = neighbour;
-                    optimalLength = currLength;
-                    maxReached = false;
-                    System.out.println("upd length = " + optimalLength);
-                    System.out.println("upd path   = " + optimal);
+                    newOptimal = neighbour;
+                    newOptimalLength = currLength;
                 }
+            }
+            if(optimalLength == newOptimalLength) {
+                break;
+            } else {
+                optimal = newOptimal;
+                optimalLength = newOptimalLength;
+                System.out.println("upd length = " + optimalLength);
+                System.out.println("upd path   = " + optimal);
             }
         }
         return optimal;
