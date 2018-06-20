@@ -16,7 +16,7 @@ public class Solution {
         return new Solution(solutionList);
     }
 
-    public static Solution getInstance(List<List<Integer>> distances, boolean quatilyCode) {
+    public static Solution getRandomInstance(List<List<Integer>> distances) {
         List<Integer> temp = new ArrayList<>(distances.size());
         for (int i = 0; i < distances.size(); i++) {
             temp.add(i);
